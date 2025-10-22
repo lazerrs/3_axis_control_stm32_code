@@ -1,0 +1,2 @@
+../Core/Src/motor.c:21:6:StepMotor_SendPulses	24	static
+../Core/Src/motor.c:40:6:StepMotor_homing	24	static
