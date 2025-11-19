@@ -1,4 +1,5 @@
-../Core/Src/motor_control.c:14:6:MotorControl_UpdateSpeed	24	static
-../Core/Src/motor_control.c:72:7:MotorControl_TIMCallback	8	static
-../Core/Src/motor_control.c:94:6:MotorControl_LCDUpdate	8	static
-../Core/Src/motor_control.c:105:6:MotorControl_StepMotor_homing	24	static
+../Core/Src/motor_control.c:15:6:MotorControl_UpdateSpeed	32	static
+../Core/Src/motor_control.c:118:7:MotorControl_TIMCallback	8	static
+../Core/Src/motor_control.c:138:7:MotorControl_TIMCallback_2	8	static
+../Core/Src/motor_control.c:158:6:MotorControl_LCDUpdate	8	static
+../Core/Src/motor_control.c:169:6:MotorControl_StepMotor_homing	24	static

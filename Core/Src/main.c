@@ -1,6 +1,6 @@
 /* USER CODE BEGIN Header */
 /**3axis step motor  control v 1.1
- Created on:tir,1404
+ Created on:mehr,1404
   ******************************************************************************
   * @file           : main.c
   * @brief          : Main program body
@@ -14,6 +14,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -23,7 +24,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "lcd.h"
-#include "motor.h"
+
 #include "motor_control.h"
 /* USER CODE END Includes */
 
@@ -57,7 +58,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint32_t adcValues[4];
+volatile uint32_t adcValues[4];
 /* USER CODE END 0 */
 
 /**
@@ -80,7 +81,7 @@ int main(void)
   HAL_Delay(200);
 
 
-
+  char lcd0[5];
   char lcd2[20];
   uint32_t lastLCDUpdate = 0;
 
@@ -97,17 +98,20 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_ADC1_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   /*-[ I2C Bus Scanning ]-*/
+  HAL_TIM_Base_Start_IT(&htim1);
+
   HAL_TIM_Base_Start_IT(&htim2);
   LCD_Init();
         LCD_Send_Command(0x01); // پاک کردن LCD
         LCD_Set_Cursor(0, 0);
-        LCD_Send_String( "K.S.A altimeter simulator ");
+        LCD_Send_String( "K.S.A 3axis control ");
 
 
 
@@ -124,7 +128,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
 
-      HAL_ADC_Start(&hadc1); // شروع ADC
+     // HAL_ADC_Start(&hadc1); // شروع ADC
 
 			  LCD_Send_Command(0x01); // پاک کردن LCD
 			  LCD_Set_Cursor(0, 0);
@@ -134,13 +138,20 @@ int main(void)
 
 
 			  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-
+			  HAL_ADCEx_Calibration_Start(&hadc1);
+			  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adcValues, 4);
   while (1)
   {
-	  Read_ADC();
+	 // Read_ADC();
+		HAL_Delay(100);
+	  LCD_Send_Command(0x01); // پاک کردن LCD
 	  	         float voltage_pa4 = adcValues[0];
-
-	  MotorControl_UpdateSpeed(voltage_pa4);
+	  	       float voltage_pa5 = adcValues[1];
+	  	     float voltage_pa6 = adcValues[2];
+	  	     float voltage_pa7 = adcValues[3];
+	  	   uint8_t msg[] = "***";
+	  	   HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
+	  MotorControl_UpdateSpeed(voltage_pa7,voltage_pa6);
 
 	         if(HAL_GetTick() - lastLCDUpdate > 100)
 	         {
@@ -148,43 +159,37 @@ int main(void)
 	             MotorControl_LCDUpdate();
 	        }
 
-	         sprintf(lcd2,"%.3f", voltage_pa4);
+	         sprintf(lcd0,"%.0f", voltage_pa4);
 	         LCD_Set_Cursor(0, 0);
-	         LCD_Send_String(lcd2);
-	 /* Read_ADC();
+	         LCD_Send_String(lcd0);
+	         HAL_UART_Transmit(&huart1,(uint8_t*) lcd0,strlen(lcd0), 10000);
+	         HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
+	         sprintf(lcd2,"%.0f", voltage_pa5);
 
-	         float voltage_pa4 = (adcValues[0] * 3.3f) / 4095.0f;
-	         float voltage_pa7 = (adcValues[1] * 3.3f) / 4095.0f;
-	         sprintf(lcd0,"%.3f", voltage_pa4);
-	         sprintf(lcd1,"%.3f", voltage_pa7);
-	  				  LCD_Set_Cursor(0, 0);
-	  				  LCD_Send_String(lcd0);
-	  				 LCD_Set_Cursor(1, 0);
-	  				 LCD_Send_String(lcd1);
-
-
-
-
-
-
-
-
-
-
-	 LCD_Set_Cursor(3, 0);
-	 LCD_Send_String("runing");
-
-
-          HAL_UART_Transmit(&huart1, "11", sizeof("11"), 10000);
-          HAL_UART_Transmit(&huart1, "  mv  ", 6, 10000);
+	         	         LCD_Set_Cursor(1, 1);
+	         	         LCD_Send_String(lcd2);
+	         	        HAL_UART_Transmit(&huart1,(uint8_t*) lcd2, strlen(lcd0), 10000);
+	         	       HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
+	         	      HAL_UART_Transmit(&huart1, "a6= ", sizeof("a6= "), 10000);
+	         	        sprintf(lcd2,"%.0f", voltage_pa6);
+	         	       LCD_Set_Cursor(2, 2);
+	         	       	         	         LCD_Send_String(lcd2);
+	         	       	         	    HAL_UART_Transmit(&huart1,(uint8_t*) lcd2, strlen(lcd2), 10000);
+	         	       	         	 HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
+	         	       	         HAL_UART_Transmit(&huart1, "a7= ", sizeof("a7= "), 10000);
+	         	       	         	    sprintf(lcd2,"%.0f", voltage_pa7);
+	         	       	         	   	         	       LCD_Set_Cursor(3, 3);
+	         	       	         	   	         	       	         	         LCD_Send_String(lcd2);
+	         	       	         	   	         	       	         HAL_UART_Transmit(&huart1,(uint8_t*) lcd2, strlen(lcd2), 10000);
+	         	       	         	   	         	        HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
+	         	       	         	   	         	        HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
 
 
 
 
 
 
-
-          HAL_Delay(500);*/
+          HAL_Delay(500);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -224,14 +229,14 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV4;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -243,7 +248,7 @@ void SystemClock_Config(void)
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if(htim->Instance == TIM2) {
-    	//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13); // این تابع باید کامل باشد
+
     	 if( motorEnable==1)
     	 {if(HAL_GPIO_ReadPin(LIMIT_UP_GPIO_Port, LIMIT_UP_Pin) == GPIO_PIN_RESET &&
     	           HAL_GPIO_ReadPin(DIR_GPIO_Port, DIR_Pin) == GPIO_PIN_SET)
@@ -259,38 +264,26 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     	MotorControl_TIMCallback();
     	 }
     }
-}
-void Read_ADC(void)
-{
-	 ADC_ChannelConfTypeDef sConfig = {0};
-	    sConfig.Rank = ADC_REGULAR_RANK_1;
-	    sConfig.SamplingTime = ADC_SAMPLETIME_71CYCLES_5;
+    if(htim->Instance == TIM1) {
 
-	    // کانال 4
-	    sConfig.Channel = ADC_CHANNEL_4;
-	    HAL_ADC_ConfigChannel(&hadc1, &sConfig);
-	    HAL_ADC_Start(&hadc1);
-	    while(!(hadc1.Instance->SR & ADC_FLAG_EOC)); // پولینگ مستقیم
-	    adcValues[0] = hadc1.Instance->DR;
-	    // کانال 5
-		sConfig.Channel = ADC_CHANNEL_5;
-		HAL_ADC_ConfigChannel(&hadc1, &sConfig);
-		HAL_ADC_Start(&hadc1);
-		while(!(hadc1.Instance->SR & ADC_FLAG_EOC));
-		adcValues[1] = hadc1.Instance->DR;
-		// کانال 6
-		sConfig.Channel = ADC_CHANNEL_6;
-		HAL_ADC_ConfigChannel(&hadc1, &sConfig);
-		HAL_ADC_Start(&hadc1);
-		while(!(hadc1.Instance->SR & ADC_FLAG_EOC));
-		adcValues[2] = hadc1.Instance->DR;
-	    // کانال 7
-	    sConfig.Channel = ADC_CHANNEL_7;
-	    HAL_ADC_ConfigChannel(&hadc1, &sConfig);
-	    HAL_ADC_Start(&hadc1);
-	    while(!(hadc1.Instance->SR & ADC_FLAG_EOC));
-	    adcValues[3] = hadc1.Instance->DR;
-	}
+       	 if( motorEnable_2==1)
+       	 {if(HAL_GPIO_ReadPin(LIMIT_UP_GPIO_Port_2, LIMIT_UP_Pin_2) == GPIO_PIN_RESET &&
+       	           HAL_GPIO_ReadPin(DIR_GPIO_Port_2, DIR_Pin_2) == GPIO_PIN_SET)
+       	        {
+       	            return;
+       	        }
+
+       	        if(HAL_GPIO_ReadPin(LIMIT_DOWN_GPIO_Port_2, LIMIT_DOWN_Pin_2) == GPIO_PIN_RESET &&
+       	           HAL_GPIO_ReadPin(DIR_GPIO_Port_2, DIR_Pin_2) == GPIO_PIN_RESET)
+       	        {
+       	            return;
+       	        }
+       	MotorControl_TIMCallback_2();
+       	 }
+       }
+}
+
+
 
 
 

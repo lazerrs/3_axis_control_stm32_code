@@ -27,9 +27,8 @@ Core/Src/motor_control.o: ../Core/Src/motor_control.c \
  C:/Users/ms/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.6/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  C:/Users/ms/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.6/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  C:/Users/ms/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.6/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
- ../Core/Inc/adc.h ../Core/Inc/tim.h ../Core/Inc/lcd.h \
- ../Core/Inc/motor.h ../Core/Inc/main.h ../Core/Inc/adc.h \
- ../Core/Inc/usart.h
+ ../Core/Inc/adc.h ../Core/Inc/tim.h ../Core/Inc/lcd.h ../Core/Inc/main.h \
+ ../Core/Inc/adc.h ../Core/Inc/usart.h
 ../Core/Inc/motor_control.h:
 ../Core/Inc/main.h:
 C:/Users/ms/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.6/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -62,7 +61,6 @@ C:/Users/ms/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.6/Drivers/STM32F1xx_HAL_Dr
 ../Core/Inc/adc.h:
 ../Core/Inc/tim.h:
 ../Core/Inc/lcd.h:
-../Core/Inc/motor.h:
 ../Core/Inc/main.h:
 ../Core/Inc/adc.h:
 ../Core/Inc/usart.h:
