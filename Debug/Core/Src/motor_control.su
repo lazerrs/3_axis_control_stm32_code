@@ -2,4 +2,4 @@
 ../Core/Src/motor_control.c:118:7:MotorControl_TIMCallback	8	static
 ../Core/Src/motor_control.c:138:7:MotorControl_TIMCallback_2	8	static
 ../Core/Src/motor_control.c:158:6:MotorControl_LCDUpdate	8	static
-../Core/Src/motor_control.c:169:6:MotorControl_StepMotor_homing	24	static
+../Core/Src/motor_control.c:168:6:MotorControl_StepMotor_homing	24	static

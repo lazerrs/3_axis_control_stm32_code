@@ -10,7 +10,7 @@ volatile int32_t stepCount_2 = 0;
 volatile uint8_t motorEnable = 0;
 volatile uint8_t motorEnable_2 = 0;
 uint32_t adcValue = 0;
-char lcd0[20],lcd3[20];
+char lcd0[20],lcd1[20],lcd2[20],lcd3[20];
 // خواندن جویستیک و تنظیم سرعت و جهت
 void MotorControl_UpdateSpeed(uint32_t adc_val1,uint32_t adc_val2)
 {
@@ -158,13 +158,12 @@ void MotorControl_UpdateSpeed(uint32_t adc_val1,uint32_t adc_val2)
 void MotorControl_LCDUpdate(void)
 {
 	sprintf(lcd0,"%.3f",(float)stepCount);
-				//  LCD_Set_Cursor(0, 0);
-		 // LCD_Send_String("Position:");
+	LCD_Set_Cursor(0, 0);
+	LCD_Send_String("Position:");
+    LCD_Set_Cursor(1, 0);
+    LCD_Send_String(lcd0);
 
-				  LCD_Set_Cursor(1, 0);
-   // LCD_Send_String(lcd0);
-
-               //  HAL_UART_Transmit(&huart1, lcd0, sizeof(lcd0), 10000);
+    HAL_UART_Transmit(&huart1, lcd0, sizeof(lcd0), 10000);
 }
 void MotorControl_StepMotor_homing(uint32_t speed)
 {

@@ -81,8 +81,8 @@ int main(void)
   HAL_Delay(200);
 
 
-  char lcd0[5];
-  char lcd2[20];
+
+ // char lcd0[20], lcd1[20],lcd2[20], lcd3[20];
   uint32_t lastLCDUpdate = 0;
 
 
@@ -140,56 +140,60 @@ int main(void)
 			  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 			  HAL_ADCEx_Calibration_Start(&hadc1);
 			  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adcValues, 4);
+	uint8_t msg[] = "***";
+	LCD_Send_Command(0x01); // پاک کردن LCD
   while (1)
   {
 	 // Read_ADC();
-		HAL_Delay(100);
-	  LCD_Send_Command(0x01); // پاک کردن LCD
-	  	         float voltage_pa4 = adcValues[0];
-	  	       float voltage_pa5 = adcValues[1];
-	  	     float voltage_pa6 = adcValues[2];
-	  	     float voltage_pa7 = adcValues[3];
-	  	   uint8_t msg[] = "***";
-	  	   HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
-	  MotorControl_UpdateSpeed(voltage_pa7,voltage_pa6);
+	HAL_Delay(100);
 
-	         if(HAL_GetTick() - lastLCDUpdate > 100)
-	         {
-	            lastLCDUpdate = HAL_GetTick();
-	             MotorControl_LCDUpdate();
-	        }
+	//float voltage_pa4 = adcValues[0];
+	//float voltage_pa5 = adcValues[1];
+	float voltage_pa6 = adcValues[2];
+	float voltage_pa7 = adcValues[3];
 
-	         sprintf(lcd0,"%.0f", voltage_pa4);
+	HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
+	MotorControl_UpdateSpeed(voltage_pa7,voltage_pa6);
+
+	 if(HAL_GetTick() - lastLCDUpdate > 100)
+	 {
+		lastLCDUpdate = HAL_GetTick();
+		 MotorControl_LCDUpdate();
+	}
+	 HAL_Delay(500);
+	       /*  sprintf(lcd0,"%.0f", voltage_pa4);
 	         LCD_Set_Cursor(0, 0);
 	         LCD_Send_String(lcd0);
 	         HAL_UART_Transmit(&huart1,(uint8_t*) lcd0,strlen(lcd0), 10000);
 	         HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
-	         sprintf(lcd2,"%.0f", voltage_pa5);
 
-	         	         LCD_Set_Cursor(1, 1);
-	         	         LCD_Send_String(lcd2);
-	         	        HAL_UART_Transmit(&huart1,(uint8_t*) lcd2, strlen(lcd0), 10000);
-	         	       HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
-	         	      HAL_UART_Transmit(&huart1, "a6= ", sizeof("a6= "), 10000);
-	         	        sprintf(lcd2,"%.0f", voltage_pa6);
-	         	       LCD_Set_Cursor(2, 2);
-	         	       	         	         LCD_Send_String(lcd2);
-	         	       	         	    HAL_UART_Transmit(&huart1,(uint8_t*) lcd2, strlen(lcd2), 10000);
-	         	       	         	 HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
-	         	       	         HAL_UART_Transmit(&huart1, "a7= ", sizeof("a7= "), 10000);
-	         	       	         	    sprintf(lcd2,"%.0f", voltage_pa7);
-	         	       	         	   	         	       LCD_Set_Cursor(3, 3);
-	         	       	         	   	         	       	         	         LCD_Send_String(lcd2);
-	         	       	         	   	         	       	         HAL_UART_Transmit(&huart1,(uint8_t*) lcd2, strlen(lcd2), 10000);
-	         	       	         	   	         	        HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
-	         	       	         	   	         	        HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
+	         sprintf(lcd1,"%.0f", voltage_pa5);
+	         LCD_Set_Cursor(1, 1);
+			 LCD_Send_String(lcd1);
+			HAL_UART_Transmit(&huart1,(uint8_t*) lcd1, strlen(lcd0), 10000);
+		    HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
+		    HAL_UART_Transmit(&huart1, "a6= ", sizeof("a6= "), 10000);
 
+		    sprintf(lcd2,"%.0f", voltage_pa6);
+			LCD_Set_Cursor(2, 2);
+			LCD_Send_String(lcd2);
+			HAL_UART_Transmit(&huart1,(uint8_t*) lcd2, strlen(lcd2), 10000);
+			HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
+			HAL_UART_Transmit(&huart1, "a7= ", sizeof("a7= "), 10000);
 
-
-
+			sprintf(lcd3,"%.0f", voltage_pa7);
+			LCD_Set_Cursor(3, 3);
+			LCD_Send_String(lcd3);
+			HAL_UART_Transmit(&huart1,(uint8_t*) lcd3, strlen(lcd3), 10000);
+			HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
+			HAL_UART_Transmit(&huart1, msg, sizeof(msg), 10000);
 
 
-          HAL_Delay(500);
+
+
+
+*/
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
